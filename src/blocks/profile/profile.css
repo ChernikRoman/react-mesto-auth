@@ -1,0 +1,11 @@
+.profile {
+    display: flex;
+    align-items: center;
+    margin: 0 19px;
+}
+
+@media (max-width: 675px) {
+    .profile {
+        flex-direction: column;
+    }
+}

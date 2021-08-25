@@ -1,0 +1,19 @@
+.cards {
+    margin: 0 19px;
+    display: grid;
+    grid: 1fr 1fr / 1fr 1fr 1fr;
+    gap: 20px 17px;
+    padding-top: 51px;
+}
+
+@media (max-width: 675px) {
+    .cards {
+        grid: 1fr 1fr 1fr / 1fr 1fr;
+    }
+}
+
+@media (max-width: 470px) {
+    .cards {
+        grid: 1fr 1fr 1fr / 1fr;
+    }
+}
