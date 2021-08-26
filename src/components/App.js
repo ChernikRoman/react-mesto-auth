@@ -1,10 +1,14 @@
 import React from "react";
+import { Redirect, Route, Router, Switch} from "react-router-dom";
 import Main from "./Main"
 import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup"
 import AddPlacePopup from "./AddPlacePopup"
 import ImagePopup from "./ImagePopup";
+import Login from "./Login";
+import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
 import api from '../utils/api';
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
@@ -14,8 +18,9 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isConfirmPopupOpen,setIsConfirmPopupOpen] = React.useState(false);
-  const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
+  const [loggedIn, setLoggedIn] = React.useState(true);
+  const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [deletedCard, setDeletedCard] = React.useState('');
 
@@ -113,14 +118,34 @@ function App() {
     setIsConfirmPopupOpen(true);
   }
 
+  const handlelog = () => {
+    setLoggedIn(!loggedIn)
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Main onEditProfile={openEditPopup} onAddPlace={openAddPlacePopup} onEditAvatar={openEditAvatarPopup} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} cards={cards}/>
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
-      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddCard={handleAddCard}/>
-      <PopupWithForm title="Вы уверены?" name="confirm" buttonContent="Да" isOpen={isConfirmPopupOpen} onSubmit={handleSubmitConfirm} onClose={closeAllPopups} />
-      <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+      <button onClick={handlelog}>loggedIn</button>
+      <Switch>
+        <Route path="/sign-up">
+          <Register />
+        </Route>
+        <Route path="/sign-in">
+          <Login />
+        </Route>
+        <Route exact path="/">
+          { loggedIn 
+             ? <>
+                <Main onEditProfile={openEditPopup} onAddPlace={openAddPlacePopup} onEditAvatar={openEditAvatarPopup} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} cards={cards}/>
+                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
+                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
+                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddCard={handleAddCard}/>
+                <PopupWithForm title="Вы уверены?" name="confirm" buttonContent="Да" isOpen={isConfirmPopupOpen} onSubmit={handleSubmitConfirm} onClose={closeAllPopups} />
+                <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+              </>
+            : <Redirect to="/sign-up" />
+          }
+        </Route>
+      </Switch>
     </CurrentUserContext.Provider>
   );
 }
