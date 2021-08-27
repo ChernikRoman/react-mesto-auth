@@ -6,17 +6,12 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route } from 'react-router-dom';
-import Login from './components/Login';
-import InfoTooltip from './components/InfoTooltip';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Header />
       <App />
-      <Route path="/test">
-        <InfoTooltip isOpen={true} status={false}/>
-      </Route>
       <Footer />
     </BrowserRouter>
   </React.StrictMode>,

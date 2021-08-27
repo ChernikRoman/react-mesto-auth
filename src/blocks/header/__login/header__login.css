@@ -1,0 +1,8 @@
+.header__login {
+    display: inline-block;
+    margin: auto 0 auto 24px;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: right;
+    color: #A9A9A9;
+}
