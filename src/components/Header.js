@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../images/header/mesto-logo.svg';
 import { Link, withRouter } from 'react-router-dom';
-import { getUserInfo, signOut } from '../utils/auth';
+import { signOut } from '../utils/auth';
 
 function Header (props) {
 
@@ -35,19 +35,13 @@ function Header (props) {
         } else if (currentLink === '/') {
             setLoginContent('Выйти');
             setLink('/sign-up');
-            getUserInfo(localStorage.getItem('jwt'))
-              .then(data=>setEmail(data.data.email))
-              .catch(err=>console.log('Возникла ошибка' + err));
+            setEmail(localStorage.getItem('email'));
         }
     }
 
     function handleClick() {
         signOut();
     }
-
-    React.useEffect(()=>{
-        choiceContent();
-    }, [])
 
     React.useEffect(()=>{
         choiceContent();

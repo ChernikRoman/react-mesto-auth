@@ -43,6 +43,7 @@ export function getUserInfo(jwt) {
 
 export function signOut() {
     localStorage.removeItem('jwt');
+    localStorage.removeItem('email');
 }
 
 export function tokenCheck() {

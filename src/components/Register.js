@@ -1,11 +1,9 @@
 import React from "react";
-import {Link, useHistory} from "react-router-dom";
-import { register } from "../utils/auth";
+import { Link } from "react-router-dom";
 
 function Register(props) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const history = useHistory()
 
   function handleEmailChange(evt) {
     setEmail(evt.target.value);
@@ -17,21 +15,7 @@ function Register(props) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    register(email, password)
-      .then(()=>{
-        setEmail('');
-        setPassword('');
-        props.handleSubmit(true);
-        const result = window.confirm('Перейти на страницу входа?');
-        if (result) {
-          history.push('/sign-in');
-        }
-      })
-      .catch((err)=>{
-        props.handleSubmit(false);
-        console.log('Возникла ошибка' + err)
-      })
-
+    props.handleSubmit(email, password);
   }
 
   return (

@@ -17,20 +17,7 @@ function Login(props) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    authorize(email, password)
-      .then((data)=> {
-        props.changeLoggedIn(true);
-        setEmail('');
-        setPassword('');
-        localStorage.setItem('jwt', data.token);
-        props.changeLoggedIn(true);
-        alert('Вы будете перенаправленны на главную страницу.')
-        history.push('/')
-      })
-      .catch((err)=>{
-        props.handleSubmit(false);
-        console.log('Возникла ошибка' + err)
-      })
+    props.handleSubmit(email, password)
   }
 
   return (

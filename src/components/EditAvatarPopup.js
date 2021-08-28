@@ -14,10 +14,6 @@ function EditAvatarPopup(props) {
       props.onUpdateAvatar(avatarLink.current.value)
     }
 
-    React.useEffect(()=>{
-        
-    })
-
     return(
       <PopupWithForm title="Обновить аватар" name="change-avatar" buttonContent="Сохранить" isOpen={props.isOpen} onClose={props.onClose} onSubmit={handleSubmit}>
         <fieldset className="pop-up__fieldset">

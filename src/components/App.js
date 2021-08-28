@@ -8,12 +8,13 @@ import AddPlacePopup from "./AddPlacePopup"
 import ImagePopup from "./ImagePopup";
 import Login from "./Login";
 import Register from "./Register";
-import { getUserInfo, signOut } from "../utils/auth";
+import { getUserInfo, register, authorize } from "../utils/auth";
 import api from '../utils/api';
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import InfoTooltip from "../components/InfoTooltip";
+import ProtectedRoute from "./ProtectedRoute";
 
-function App(props) {
+function App() {
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
@@ -25,7 +26,7 @@ function App(props) {
   const [loggedIn, setLoggedIn] = React.useState();
   const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
-  const [deletedCard, setDeletedCard] = React.useState('');
+  const [deletedCard, setDeletedCard] = React.useState({});
   const history = useHistory();
 
   React.useEffect(()=>{
@@ -39,8 +40,15 @@ function App(props) {
 
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt');
+      setLoggedIn(true);
       getUserInfo(jwt)
-        .then(setLoggedIn(true))  //!!!!!!!!!!!!!! выполнить проверку токена!!!!!
+        .then((res)=>{
+          if (res.data.email) {
+            localStorage.setItem('email', res.data.email)
+            setLoggedIn(true);
+          }
+        })
+        .catch(data => console.log('Ошибка при обращении к серверу ' + data));
     } else {
       history.push('/sign-up')
     }
@@ -106,7 +114,8 @@ function App(props) {
           setCards(
               cards.map((item) => item._id === card._id ? newCard : item)
           );
-    });
+      })
+      .catch(data => console.log('Ошибка при обращении к серверу ' + data));
   }
 
   const handleSubmitConfirm = (evt) => {
@@ -116,7 +125,7 @@ function App(props) {
         setCards(
           cards.filter((item) => item._id !== deletedCard._id)
         );
-      setDeletedCard('')
+      setDeletedCard({})
       closeAllPopups();
       })
       .catch(data => console.log('Ошибка при обращении к серверу ' + data));
@@ -127,36 +136,63 @@ function App(props) {
     setIsConfirmPopupOpen(true);
   }
 
-  const handleInfoTooltipSubmit = (status) => {
-    setIsTooltipOpen(true);
-    setStatusTooltip(status);
+  const handleRegisterSubmit = (email, password) => {
+    register(email, password)
+    .then(()=>{
+      setIsTooltipOpen(true);
+      setStatusTooltip(true);
+      history.push('/sign-in');
+    })
+    .catch((err)=>{
+      setIsTooltipOpen(true);
+      setStatusTooltip(false);
+      console.log('Возникла ошибка ' + err);
+    })
+  }
+
+  const handleLoginSubmit = (email, password) => {
+    authorize(email, password)
+    .then((data)=> {
+      localStorage.setItem('jwt', data.token);
+      setLoggedIn(true);
+      history.push('/')
+    })
+    .catch((err)=>{
+      console.log('Возникла ошибка ' + err)
+    })
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Switch>
         <Route path="/sign-up">
-          <Register handleSubmit={handleInfoTooltipSubmit}>
-            <InfoTooltip isOpen={isTooltipOpen} status={statusTooltip} onClose={closeAllPopups} />
-          </Register>
+          <Register handleSubmit={handleRegisterSubmit} />
         </Route>
         <Route path="/sign-in">
-          <Login changeLoggedIn={setLoggedIn} handleSubmit={handleInfoTooltipSubmit}>
-            <InfoTooltip isOpen={isTooltipOpen} status={statusTooltip} onClose={closeAllPopups} />
-          </Login>
+          <Login handleSubmit={handleLoginSubmit} />
         </Route>
         <Route exact path="/">
-          {loggedIn && 
-          <>
-            <Main onEditProfile={openEditPopup} onAddPlace={openAddPlacePopup} onEditAvatar={openEditAvatarPopup} onCardClick={handleCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} cards={cards}/>
-            <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
-            <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-            <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddCard={handleAddCard}/>
-            <PopupWithForm title="Вы уверены?" name="confirm" buttonContent="Да" isOpen={isConfirmPopupOpen} onSubmit={handleSubmitConfirm} onClose={closeAllPopups} />
-            <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
-          </>}
+
+          <ProtectedRoute
+            path="/"
+            loggedIn={loggedIn}
+            component={Main}
+            onEditProfile={openEditPopup}
+            onAddPlace={openAddPlacePopup}
+            onEditAvatar={openEditAvatarPopup}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            cards={cards}
+          />
         </Route>
       </Switch>
+      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
+      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
+      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddCard={handleAddCard}/>
+      <PopupWithForm title="Вы уверены?" name="confirm" buttonContent="Да" isOpen={isConfirmPopupOpen} onSubmit={handleSubmitConfirm} onClose={closeAllPopups} />
+      <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
+      <InfoTooltip isOpen={isTooltipOpen} status={statusTooltip} onClose={closeAllPopups} />
     </CurrentUserContext.Provider>
   );
 }
