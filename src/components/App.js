@@ -8,7 +8,7 @@ import AddPlacePopup from "./AddPlacePopup"
 import ImagePopup from "./ImagePopup";
 import Login from "./Login";
 import Register from "./Register";
-import { getUserInfo } from "../utils/auth";
+import { getUserInfo, signOut } from "../utils/auth";
 import api from '../utils/api';
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import InfoTooltip from "../components/InfoTooltip";
@@ -40,10 +40,7 @@ function App(props) {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt');
       getUserInfo(jwt)
-        .then(data=>{
-          console.log(data)
-          setLoggedIn(true)
-        }) 
+        .then(setLoggedIn(true))  //!!!!!!!!!!!!!! выполнить проверку токена!!!!!
     } else {
       history.push('/sign-up')
     }
@@ -55,10 +52,6 @@ function App(props) {
 
   const openAddPlacePopup = ()=> {
     setIsAddPlacePopupOpen(true)
-    // api.addCard({
-    //   newPlaceName: 'BMW',
-    //   newPlaceLink: 'https://images.unsplash.com/photo-1544986342-f4f2e11b7c02?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80'
-    // })
   }
 
   const openEditAvatarPopup = ()=> {
@@ -134,26 +127,21 @@ function App(props) {
     setIsConfirmPopupOpen(true);
   }
 
-  const handleSubmitOK = () => {
+  const handleInfoTooltipSubmit = (status) => {
     setIsTooltipOpen(true);
-    setStatusTooltip(true);
-  }
-
-  const handleSubmitErr = () => {
-    setIsTooltipOpen(true);
-    setStatusTooltip(false);
+    setStatusTooltip(status);
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Switch>
         <Route path="/sign-up">
-          <Register handleSubmitOK={handleSubmitOK} handleSubmitErr={handleSubmitErr}>
+          <Register handleSubmit={handleInfoTooltipSubmit}>
             <InfoTooltip isOpen={isTooltipOpen} status={statusTooltip} onClose={closeAllPopups} />
           </Register>
         </Route>
         <Route path="/sign-in">
-          <Login changeLoggedIn={setLoggedIn} handleSubmitOK={handleSubmitOK} handleSubmitErr={handleSubmitErr}>
+          <Login changeLoggedIn={setLoggedIn} handleSubmit={handleInfoTooltipSubmit}>
             <InfoTooltip isOpen={isTooltipOpen} status={statusTooltip} onClose={closeAllPopups} />
           </Login>
         </Route>

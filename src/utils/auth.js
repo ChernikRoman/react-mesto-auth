@@ -1,5 +1,13 @@
 export const BASE_URL = 'https://auth.nomoreparties.co';
 
+function checkResponse(response) {
+  if(response.ok) {
+    return response.json();
+  } else {
+    return Promise.reject(response.status);
+  }
+}
+
 export function register(email, password) {
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
@@ -8,13 +16,7 @@ export function register(email, password) {
         },
         body: JSON.stringify({email: email, password: password})
     })
-      .then((res)=>{ if (res.status === 201) {
-        return res.json();
-      } else {
-          return Promise.reject(res.statusText);
-      }
-    })
-      .then(data=>console.log(data))
+      .then(response => checkResponse(response))
 }
 
 export function authorize(email, password) {
@@ -25,16 +27,7 @@ export function authorize(email, password) {
         },
         body: JSON.stringify({email: email, password: password})
     })
-      .then((res)=>{ if (res.status === 200) {
-        return res.json();
-      } else {
-          return Promise.reject(res.statusText);
-      }
-    })
-      .then((data)=>{
-        localStorage.setItem('jwt', data.token)
-      })
-
+    .then(response => checkResponse(response))
 }
 
 export function getUserInfo(jwt) {
@@ -45,16 +38,7 @@ export function getUserInfo(jwt) {
             "Authorization" : `Bearer ${jwt}`
         }
     })
-      .then(res => {
-          console.log(res)
-          if (res.status == 200 ) {
-              return res.json();
-          } else {
-              return Promise.reject(res.statusText);
-          }
-      })
-      .then(data=>data.data.email)
-      .catch(err => console.log(err))
+    .then(response => checkResponse(response))
 }
 
 export function signOut() {
@@ -64,5 +48,3 @@ export function signOut() {
 export function tokenCheck() {
   return localStorage.getItem('jwt')
 }
-
-// register('awdawdwad@awdawd.com', 'wdadawdawdawd')

@@ -21,11 +21,15 @@ function Register(props) {
       .then(()=>{
         setEmail('');
         setPassword('');
-        props.handleSubmitOK();
+        props.handleSubmit(true);
+        const result = window.confirm('Перейти на страницу входа?');
+        if (result) {
+          history.push('/sign-in');
+        }
       })
       .catch((err)=>{
-        props.handleSubmitErr();
-        console.log(err)
+        props.handleSubmit(false);
+        console.log('Возникла ошибка' + err)
       })
 
   }

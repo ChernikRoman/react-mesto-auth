@@ -13,7 +13,6 @@ function Card(props) {
 
     const handleCardClick = ()=> {
         props.onCardClick(props.card)
-        console.log(props.card)
     }
 
     const handleLikeClick = () => {

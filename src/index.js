@@ -5,7 +5,7 @@ import App from './components/App';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>

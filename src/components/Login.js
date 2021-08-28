@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import { authorize } from "../utils/auth";
 
 function Login(props) {
@@ -18,19 +18,18 @@ function Login(props) {
   function handleSubmit(evt) {
     evt.preventDefault();
     authorize(email, password)
-      .then(()=> {
+      .then((data)=> {
         props.changeLoggedIn(true);
         setEmail('');
         setPassword('');
-        console.log(props)
-        props.handleSubmitOK();
-        setTimeout(()=>{
-          history.push('/')
-        }, 3000)
+        localStorage.setItem('jwt', data.token);
+        props.changeLoggedIn(true);
+        alert('Вы будете перенаправленны на главную страницу.')
+        history.push('/')
       })
       .catch((err)=>{
-        props.handleSubmitErr();
-        console.log(err)
+        props.handleSubmit(false);
+        console.log('Возникла ошибка' + err)
       })
   }
 

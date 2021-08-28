@@ -1,14 +1,13 @@
 import React from 'react';
 import logo from '../images/header/mesto-logo.svg';
-import { Link } from 'react-router-dom';
-import { getUserInfo } from '../utils/auth';
+import { Link, withRouter } from 'react-router-dom';
+import { getUserInfo, signOut } from '../utils/auth';
 
-function Header () {
+function Header (props) {
 
-    const [email, setEmail] = React.useState('');
-    const [login, setLogin] = React.useState('');
+    const [loginContent, setLoginContent] = React.useState();
     const [link, setLink] = React.useState('');
-    const [handler, setHandler] = React.useState();
+    const [email, setEmail] = React.useState();
 
     const styleLink = {
         display: 'inline-block',
@@ -23,44 +22,47 @@ function Header () {
         color: '#A9A9A9'
     }
 
-    React.useEffect(()=>{
-        const link = window.location.pathname;
-        const jwt = localStorage.getItem('jwt');
-        const email =''
-        if (jwt) {
-            email = getUserInfo(jwt).then(data=>setEmail(data))
-        }
-
-        if (link === '/sign-up') {
-            setLogin('Войти');
+    function choiceContent() {
+        const currentLink = props.location.pathname;
+        if (currentLink === '/sign-up') {
+            setLoginContent('Войти');
             setLink('/sign-in');
-            setEmail('')
-            setHandler()
-
-        } else if (link == '/sign-in' ) {
-            setLogin('Регистрация');
+            setEmail('');
+        } else if (currentLink === '/sign-in' ) {
+            setLoginContent('Регистрация');
             setLink('/sign-up');
-            setEmail('')
-            setHandler()
-        } else if (link == '/') {
-            setLogin('Выйти');
+            setEmail('');
+        } else if (currentLink === '/') {
+            setLoginContent('Выйти');
             setLink('/sign-up');
-            setHandler(signOut)
+            getUserInfo(localStorage.getItem('jwt'))
+              .then(data=>setEmail(data.data.email))
+              .catch(err=>console.log('Возникла ошибка' + err));
         }
+    }
 
+    function handleClick() {
+        signOut();
+    }
+
+    React.useEffect(()=>{
+        choiceContent();
     }, [])
 
-    function signOut() {
-        localStorage.removeItem('jwt')
-    }
+    React.useEffect(()=>{
+        choiceContent();
+    }, [props.location.pathname])
 
     return (
         <header className="header">
             <img className="header__logo" src={logo} alt="Место" />
             <span className="header__email">{email}</span>
-            <Link to={link} style={styleLink} onClick={handler}>{login}</Link>
+            { props.location.pathname === '/' 
+              ? <Link to={link} style={styleLink} onClick={handleClick}>{loginContent}</Link>
+              : <Link to={link} style={styleLink}>{loginContent}</Link>
+            }
         </header>        
     )
 }
 
-export default Header;
+export default withRouter(Header);

@@ -6,9 +6,9 @@ class Api {
 
   _checkResponse(response) {
     if(response.ok) {
-      return response.json()
+      return response.json();
     } else {
-      return Promise.reject(response.status)
+      return Promise.reject(response.status);
     }
   }
 
