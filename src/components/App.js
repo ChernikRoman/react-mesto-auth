@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, useHistory, Switch} from "react-router-dom";
+import Header from "./Header";
 import Main from "./Main"
 import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from "./EditProfilePopup";
@@ -23,6 +24,7 @@ function App() {
   const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
   const [statusTooltip, setStatusTooltip] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
+  const [currentUserEmail, setCurrentUserEmail] = React.useState('');
   const [loggedIn, setLoggedIn] = React.useState();
   const [selectedCard, setSelectedCard] = React.useState({});
   const [cards, setCards] = React.useState([]);
@@ -44,7 +46,7 @@ function App() {
       getUserInfo(jwt)
         .then((res)=>{
           if (res.data.email) {
-            localStorage.setItem('email', res.data.email)
+            setCurrentUserEmail(res.data.email);
             setLoggedIn(true);
           }
         })
@@ -52,7 +54,7 @@ function App() {
     } else {
       history.push('/sign-up')
     }
-  }, [])
+  }, [loggedIn])
 
   const openEditPopup = ()=> {
     setIsEditProfilePopupOpen(true)
@@ -164,6 +166,7 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
+      <Header userEmail={currentUserEmail} handleSignOut={setLoggedIn}/>
       <Switch>
         <Route path="/sign-up">
           <Register handleSubmit={handleRegisterSubmit} />
@@ -172,7 +175,6 @@ function App() {
           <Login handleSubmit={handleLoginSubmit} />
         </Route>
         <Route exact path="/">
-
           <ProtectedRoute
             path="/"
             loggedIn={loggedIn}

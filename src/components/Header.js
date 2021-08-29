@@ -35,17 +35,18 @@ function Header (props) {
         } else if (currentLink === '/') {
             setLoginContent('Выйти');
             setLink('/sign-up');
-            setEmail(localStorage.getItem('email'));
+            setEmail(props.userEmail);
         }
     }
 
     function handleClick() {
         signOut();
+        props.handleSignOut(false)
     }
 
     React.useEffect(()=>{
         choiceContent();
-    }, [props.location.pathname])
+    }, [props.location.pathname, props.userEmail])
 
     return (
         <header className="header">
