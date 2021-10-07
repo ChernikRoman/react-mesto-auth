@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://auth.nomoreparties.co';
+export const BASE_URL = 'http://localhost:3000';
 
 function checkResponse(response) {
   if(response.ok) {
@@ -11,6 +11,7 @@ function checkResponse(response) {
 export function register(email, password) {
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -22,29 +23,11 @@ export function register(email, password) {
 export function authorize(email, password) {
     return fetch(`${BASE_URL}/signin`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({email: email, password: password})
     })
     .then(response => checkResponse(response))
-}
-
-export function getUserInfo(jwt) {
-    return fetch(`${BASE_URL}/users/me`, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization" : `Bearer ${jwt}`
-        }
-    })
-    .then(response => checkResponse(response))
-}
-
-export function signOut() {
-    localStorage.removeItem('jwt');
-}
-
-export function tokenCheck() {
-  return localStorage.getItem('jwt')
 }

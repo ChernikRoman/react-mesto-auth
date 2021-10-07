@@ -14,6 +14,7 @@ class Api {
 
   loadUserInfo() {
     return fetch(`${this._baseUrl}/users/me`, {
+      credentials: 'include',
       headers: this._headers
     })
       .then(this._checkResponse)
@@ -21,6 +22,7 @@ class Api {
 
   getCards() {
     return fetch(`${this._baseUrl}/cards`, {
+      credentials: 'include',
       headers: this._headers
     })
       .then(this._checkResponse)
@@ -29,6 +31,7 @@ class Api {
   updateUserInfo(data) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({
         name: data.name,
@@ -41,6 +44,7 @@ class Api {
   addCard(data) {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'POST',
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({
         name: data.newPlaceName,
@@ -53,22 +57,25 @@ class Api {
   handleDeleteCard(cardId){
     return fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: this._headers
     })
       .then(this._checkResponse)
   }
 
   setLike(cardId) {
-    return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
+    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: 'PUT',
+      credentials: 'include',
       headers: this._headers
     })
       .then(this._checkResponse)
   }
 
   unsetLike(cardId) {
-    return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
+    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: this._headers
     })
       .then(this._checkResponse)
@@ -85,6 +92,7 @@ class Api {
   changeAvatar(data) {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({
         avatar: data
@@ -92,12 +100,18 @@ class Api {
     })
       .then(this._checkResponse)
   }
+
+  logout() {
+    return fetch(`${this._baseUrl}/logout`, {
+      method: 'GET',
+      credentials: 'include',
+    })
+  }
 }
 
 const api = new Api({
-  baseUrl: 'https://nomoreparties.co/v1/cohort-25',
+  baseUrl: 'http://localhost:3000',
   headers: {
-    authorization: '71159411-ec47-4b6b-9a3f-60efbcf1f21f',
     'Content-Type': 'application/json'
   }
 })

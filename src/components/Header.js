@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../images/header/mesto-logo.svg';
 import { Link, withRouter } from 'react-router-dom';
-import { signOut } from '../utils/auth';
+import api from '../utils/api';
 
 function Header (props) {
 
@@ -40,8 +40,8 @@ function Header (props) {
     }
 
     function handleClick() {
-        signOut();
-        props.handleSignOut(false)
+        api.logout();
+        props.handleSignOut(false);
     }
 
     React.useEffect(()=>{

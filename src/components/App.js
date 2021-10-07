@@ -9,7 +9,7 @@ import AddPlacePopup from "./AddPlacePopup"
 import ImagePopup from "./ImagePopup";
 import Login from "./Login";
 import Register from "./Register";
-import { getUserInfo, register, authorize } from "../utils/auth";
+import { register, authorize } from "../utils/auth";
 import api from '../utils/api';
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import InfoTooltip from "../components/InfoTooltip";
@@ -33,27 +33,18 @@ function App() {
 
   React.useEffect(()=>{
     api.loadUserInfo()
-      .then(data => setCurrentUser(data))
-      .catch(data => console.log('Ошибка при обращении к серверу ' + data));
-      
-    api.getCards()
-      .then(data => setCards(data))
-      .catch(data => console.log('Ошибка при обращении к серверу ' + data));
-
-    if (localStorage.getItem('jwt')) {
-      const jwt = localStorage.getItem('jwt');
-      setLoggedIn(true);
-      getUserInfo(jwt)
-        .then((res)=>{
-          if (res.data.email) {
-            setCurrentUserEmail(res.data.email);
-            setLoggedIn(true);
-          }
-        })
-        .catch(data => console.log('Ошибка при обращении к серверу ' + data));
-    } else {
-      history.push('/sign-up')
-    }
+      .then(data => {
+        setCurrentUser(data);
+        setCurrentUserEmail(data.email);
+        api.getCards()
+          .then(data => setCards(data))
+          .catch(data => console.log('Ошибка при обращении к серверу ' + data));
+        setLoggedIn(true);
+      })
+      .catch(data => {
+        console.log('Ошибка при обращении к серверу ' + data)
+        history.push('/sign-up')
+      });
   }, [loggedIn])
 
   const openEditPopup = ()=> {
@@ -109,7 +100,7 @@ function App() {
   }
 
   function handleCardLike (card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     api
       .changeLikeStatus(card._id, isLiked)
       .then((newCard) => {
