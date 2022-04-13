@@ -25,7 +25,7 @@ function Main(props) {
                     <button className="profile__add-button" type="button" onClick={props.onAddPlace}></button>
                 </section>
                 <section className="cards">
-                    {cardsElements}
+                    {cardsElements.reverse()}
                 </section>
             </main>
             <Footer />
