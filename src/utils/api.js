@@ -110,7 +110,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: 'https://backend-mesto-domain.nomoredomains.club',
+  baseUrl: 'https://api-express-mesto.herokuapp.com/',
   headers: {
     'Content-Type': 'application/json'
   }

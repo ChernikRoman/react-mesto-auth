@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://backend-mesto-domain.nomoredomains.club';
+export const BASE_URL = 'https://api-express-mesto.herokuapp.com/';
 
 function checkResponse(response) {
   if(response.ok) {
