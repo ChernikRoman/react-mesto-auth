@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { Route, useHistory, Switch} from "react-router-dom";
 import Header from "./Header";
@@ -32,19 +33,22 @@ function App() {
   const history = useHistory();
 
   React.useEffect(()=>{
-    api.loadUserInfo()
-      .then(data => {
-        setCurrentUser(data);
-        setCurrentUserEmail(data.email);
-        api.getCards()
-          .then(data => setCards(data))
-          .catch(data => console.log('Ошибка при обращении к серверу ' + data));
-        setLoggedIn(true);
-      })
-      .catch(data => {
-        console.log('Ошибка при обращении к серверу ' + data)
-        history.push('/sign-up')
-      });
+    if (localStorage.getItem('loggedIn')) {
+      api.loadUserInfo()
+        .then(data => {
+          setCurrentUser(data);
+          setCurrentUserEmail(data.email);
+          api.getCards()
+            .then(data => setCards(data))
+            .catch(data => console.log('Ошибка при обращении к серверу ' + data));
+          setLoggedIn(true);
+        })
+        .catch(data => {
+          console.log('Ошибка при обращении к серверу ' + data)
+        });
+    } else {
+      history.push('/sign-up')
+    }
   }, [loggedIn])
 
   const openEditPopup = ()=> {
@@ -93,7 +97,7 @@ function App() {
   const handleAddCard = (data) => {
     api.addCard(data)
       .then((data)=>{
-        setCards([data, ...cards])
+        setCards([...cards, data])
         closeAllPopups();        
       })
       .catch(data => console.log('Ошибка при обращении к серверу ' + data));
@@ -146,7 +150,7 @@ function App() {
   const handleLoginSubmit = (email, password) => {
     authorize(email, password)
     .then((data)=> {
-      localStorage.setItem('jwt', data.token);
+      localStorage.setItem('loggedIn', 'true');
       setLoggedIn(true);
       history.push('/')
     })

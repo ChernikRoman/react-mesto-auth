@@ -42,6 +42,7 @@ function Header (props) {
     function handleClick() {
         api.logout();
         props.handleSignOut(false);
+        localStorage.removeItem('loggedIn')
     }
 
     React.useEffect(()=>{

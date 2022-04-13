@@ -110,7 +110,7 @@ class Api {
 }
 
 const api = new Api({
-  baseUrl: 'https://api-express-mesto.herokuapp.com/',
+  baseUrl: 'https://api-express-mesto.herokuapp.com',
   headers: {
     'Content-Type': 'application/json'
   }
