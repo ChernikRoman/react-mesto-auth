@@ -15,6 +15,7 @@ import api from '../utils/api';
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import InfoTooltip from "../components/InfoTooltip";
 import ProtectedRoute from "./ProtectedRoute";
+import SafariPage from "./SafariPage";
 
 function App() {
 
@@ -33,6 +34,10 @@ function App() {
   const history = useHistory();
 
   React.useEffect(()=>{
+    if(navigator.vendor.includes('Apple')) {
+      return history.push('/safari')
+    } 
+    
     if (localStorage.getItem('loggedIn')) {
       api.loadUserInfo()
         .then(data => {
@@ -45,9 +50,11 @@ function App() {
         })
         .catch(data => {
           console.log('Ошибка при обращении к серверу ' + data)
+          localStorage.removeItem('loggedIn')
+          history.push('/sign-in');
         });
     } else {
-      history.push('/sign-up')
+      history.push('/sign-up');
     }
   }, [loggedIn])
 
@@ -149,10 +156,10 @@ function App() {
 
   const handleLoginSubmit = (email, password) => {
     authorize(email, password)
-    .then((data)=> {
+    .then(()=> {
       localStorage.setItem('loggedIn', 'true');
       setLoggedIn(true);
-      history.push('/')
+      history.push('/');
     })
     .catch((err)=>{
       console.log('Возникла ошибка ' + err)
@@ -182,6 +189,9 @@ function App() {
             onCardDelete={handleCardDelete}
             cards={cards}
           />
+        </Route>
+        <Route>
+          <SafariPage />
         </Route>
       </Switch>
       <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>

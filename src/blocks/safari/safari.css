@@ -1,0 +1,19 @@
+.safari {
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+}
+
+.safari__logo {
+    margin-bottom: 50px;
+}
+
+.safari__description {
+    max-width: 918px;
+    line-height: 1.3em;
+    text-align: justify;
+}
