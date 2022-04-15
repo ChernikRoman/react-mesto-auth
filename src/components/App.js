@@ -190,7 +190,7 @@ function App() {
             cards={cards}
           />
         </Route>
-        <Route>
+        <Route path="/safari">
           <SafariPage />
         </Route>
       </Switch>
